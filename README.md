@@ -8,26 +8,3 @@
 [![Go project version](https://badge.fury.io/go/github.com%2Fchyroc%2Fgithub-used-by.svg)](https://badge.fury.io/go/github.com%2Fchyroc%2Fgithub-used-by)
 
 ![](./header.png)
-
-## Install
-
-```shell
-go get github.com/chyroc/github-used-by
-```
-
-## Usage
-
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/chyroc/github-used-by"
-)
-
-func main() {
-	res := go_project_template.Incr(1)
-	fmt.Println(res) // output: 2
-}
-```

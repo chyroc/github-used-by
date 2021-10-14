@@ -20,16 +20,19 @@ jobs:
       with:
         go-version: 1.17
 
-    - name: Run
+    - name: Build
       run: |
-        cd cmd/fetch-used-by && go build -o /tmp/fetch-used-by main.go
-        cd cmd/generate-badge && go build -o /tmp/generate-badge main.go
+        ( cd cmd/fetch-used-by && go build -o /tmp/fetch-used-by main.go )
+        ( cd cmd/generate-badge && go build -o /tmp/generate-badge main.go )
+        rm -rf cmd README.md LICENSE .gitignore .github
 
     - name: Run
       run: |
         git checkout gh-pages || git checkout -b gh-pages
         /tmp/fetch-used-by
         /tmp/generate-badge
+        echo 'github-used-by.chyroc.cn' > CNAME
+        rm config.yaml
 
     - name: Commit and Push
       run: |
@@ -37,4 +40,4 @@ jobs:
         git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
         git add --all
         git commit -am "Automated Commit: $(date)" || echo "no commit"
-        git push || echo "no push"
+        git push --set-upstream origin gh-pages -f || echo "no push"
