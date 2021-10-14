@@ -1,0 +1,33 @@
+    <script>
+        function httpGet(theUrl) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.open("GET", theUrl, false); // false for synchronous request
+            xmlHttp.send(null);
+            return xmlHttp.responseText;
+        }
+
+        window.onload = function (){
+            const repo ='/chyroc/lark' //window.location.pathname;
+            const regex = /Used by.*?<span.*?>(\d)+<\/span>/gm;
+            const contentURL = `https://api.allorigins.win/raw?url=https://github.com${repo}`;
+            const res = httpGet(contentURL);
+            var count = '';
+            while ((m = regex.exec(res)) !== null) {
+                if (m.index === regex.lastIndex) {
+                    regex.lastIndex++;
+                }
+                m.forEach((match, groupIndex) => {
+                    if (groupIndex === 1) {
+                        count = match;
+                    }
+                });
+            }
+            const badgeURL = `https://api.allorigins.win/raw?url=https://img.shields.io/badge/Used%20by-${count}-brightgreen`;
+            const badge = httpGet(badgeURL);
+            console.log('count', count, badge);
+            // window.location.href = badgeURL;
+            // document.quer
+            document.getElementById('badge').innerHTML = badge;
+        }
+    </script>
+<span id="badge" style="padding: 0; margin: 0"></span>
