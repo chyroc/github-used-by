@@ -2,6 +2,7 @@ package main
 
 import (
 	_ "embed"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -16,8 +17,6 @@ import (
 )
 
 var (
-	//go:embed config.yaml
-	config   string
 	httpCli  = &http.Client{Timeout: time.Second * 3}
 	regCount = regexp.MustCompile(`Used by.*?<span .*?>(\d)+</span>`)
 )
@@ -30,9 +29,12 @@ func main() {
 }
 
 func f() error {
-	repos := []string{}
-	err := yaml.Unmarshal([]byte(config), &repos)
+	bs, err := ioutil.ReadFile("./config.yaml")
 	if err != nil {
+		return err
+	}
+	repos := []string{}
+	if err := yaml.Unmarshal(bs, &repos); err != nil {
 		return err
 	}
 	var errs []string
@@ -58,6 +60,9 @@ func f() error {
 		}
 	}
 
+	if len(errs) > 0 {
+		return fmt.Errorf(strings.Join(errs, " / "))
+	}
 	return nil
 }
 

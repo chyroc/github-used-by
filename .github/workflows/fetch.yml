@@ -22,7 +22,11 @@ jobs:
 
     - name: Run
       run: |
-        go run main.go
+        cd cmd/fetch-used-by && go build -o /tmp/fetch-used-by main.go
+
+    - name: Run
+      run: |
+        /tmp/fetch-used-by
 
     - name: Commit and Push
       run: |
