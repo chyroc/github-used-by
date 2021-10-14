@@ -2,10 +2,11 @@ package main
 
 import (
 	_ "embed"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -20,7 +21,6 @@ var (
 	httpCli  = &http.Client{Timeout: time.Second * 3}
 	regCount = regexp.MustCompile(`Used by.*?<span .*?>(\d)+</span>`)
 )
-
 
 func main() {
 	err := f()
@@ -47,9 +47,16 @@ func f() error {
 			errs = append(errs, err.Error())
 			continue
 		}
-		fmt.Println(getRepoName(repo), count)
+		file := "data/" + getRepoName(repo) + ".txt"
+		if err = os.MkdirAll(filepath.Dir(file), 0o777); err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
+		if err = ioutil.WriteFile(file, []byte(strconv.FormatInt(int64(count), 10)), 0o666); err != nil {
+			errs = append(errs, err.Error())
+			continue
+		}
 	}
-	fmt.Println(repos)
 
 	return nil
 }
