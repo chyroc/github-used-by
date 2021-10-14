@@ -1,4 +1,4 @@
-module github.com/chyroc/github-used-by
+module github.com/chyroc/github-used-by/cmd/fetch-used-by
 
 go 1.17
 

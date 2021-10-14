@@ -23,10 +23,13 @@ jobs:
     - name: Run
       run: |
         cd cmd/fetch-used-by && go build -o /tmp/fetch-used-by main.go
+        cd cmd/generate-badge && go build -o /tmp/generate-badge main.go
 
     - name: Run
       run: |
+        git checkout gh-pages || git checkout -b gh-pages
         /tmp/fetch-used-by
+        /tmp/generate-badge
 
     - name: Commit and Push
       run: |
