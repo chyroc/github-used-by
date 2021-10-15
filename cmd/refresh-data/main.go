@@ -17,9 +17,11 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println("repos", repos)
 
 	for _, repo := range repos {
 		count, err := getCount(repo)
+		fmt.Println("repo", repo, count, err)
 		if err != nil {
 			panic(err)
 		}
@@ -31,6 +33,7 @@ func main() {
 			panic(err)
 		}
 		file := "docs/" + repo + ".svg"
+		fmt.Println("badge", repo, file)
 		if err = os.MkdirAll(filepath.Dir(file), 0o777); err != nil {
 			panic(err)
 		}

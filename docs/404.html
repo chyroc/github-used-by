@@ -8,9 +8,9 @@
     }
 
     window.onload = function () {
-        var repo = '/chyroc/go-lambda' //window.location.pathname;
+        var repo = window.location.pathname;
         const isSvgPage = repo.endsWith('.svg')
-        repo = repo.endsWith('.svg') ? repo.slice(0, 4) : repo
+        repo = repo.endsWith('.svg') ? repo.slice(0, -4) : repo
         console.log('repo', isSvgPage, repo)
         const svgURL = `https://github-used-by.chyroc.cn${repo}.svg`
         const triggerURL = `https://github-used-by.in.chyroc.cn/trigger${repo}`
