@@ -37,7 +37,7 @@ func writeFile(githubToken, owner, repo string) error {
 	tc := oauth2.NewClient(ctx, ts)
 	client := github.NewClient(tc)
 
-	path := fmt.Sprintf("data/%s:_:_:%s.txt", owner, repo)
+	path := fmt.Sprintf("data/%s:_:_:%s", owner, repo)
 	author := github.CommitAuthor{
 		Name:  ptr.String("github-actions[bot]"),
 		Email: ptr.String("41898282+github-actions[bot]@users.noreply.github.com"),
