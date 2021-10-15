@@ -1,33 +1,30 @@
-    <script>
-        function httpGet(theUrl) {
-            var xmlHttp = new XMLHttpRequest();
-            xmlHttp.open("GET", theUrl, false); // false for synchronous request
-            xmlHttp.send(null);
-            return xmlHttp.responseText;
-        }
+<script>
+    function httpGet(theUrl) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", theUrl, false); // false for synchronous request
+        xmlHttp.send(null);
+        console.log('xmlHttp', xmlHttp.status)
+        return {status: xmlHttp.status, text: xmlHttp.responseText};
+    }
 
-        window.onload = function (){
-            const repo ='/chyroc/lark' //window.location.pathname;
-            const regex = /Used by.*?<span.*?>(\d)+<\/span>/gm;
-            const contentURL = `https://api.allorigins.win/raw?url=https://github.com${repo}`;
-            const res = httpGet(contentURL);
-            var count = '';
-            while ((m = regex.exec(res)) !== null) {
-                if (m.index === regex.lastIndex) {
-                    regex.lastIndex++;
-                }
-                m.forEach((match, groupIndex) => {
-                    if (groupIndex === 1) {
-                        count = match;
-                    }
-                });
+    window.onload = function () {
+        var repo = '/chyroc/go-lambda' //window.location.pathname;
+        const isSvgPage = repo.endsWith('.svg')
+        repo = repo.endsWith('.svg') ? repo.slice(0, 4) : repo
+        console.log('repo', isSvgPage, repo)
+        const svgURL = `https://github-used-by.chyroc.cn${repo}.svg`
+        const triggerURL = `https://github-used-by.in.chyroc.cn/trigger${repo}`
+        const {status, text} = httpGet(svgURL);
+        console.log('status', status)
+        if (status === 200) {
+            if (!isSvgPage) {
+                window.location.href = svgURL;
             }
-            const badgeURL = `https://api.allorigins.win/raw?url=https://img.shields.io/badge/Used%20by-${count}-brightgreen`;
-            const badge = httpGet(badgeURL);
-            console.log('count', count, badge);
-            // window.location.href = badgeURL;
-            // document.quer
-            document.getElementById('badge').innerHTML = badge;
+        } else {
+            httpGet(triggerURL)
+            if (!isSvgPage) {
+                window.location.href = svgURL;
+            }
         }
-    </script>
-<span id="badge" style="padding: 0; margin: 0"></span>
+    }
+</script>

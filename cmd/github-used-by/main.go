@@ -4,8 +4,11 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/chyroc/go-ptr"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/v39/github"
 	"golang.org/x/oauth2"
@@ -17,7 +20,12 @@ func main() {
 
 	r := gin.New()
 	r.Use(gin.Logger())
-	r.GET("/trigger/:owner/:repo", func(c *gin.Context) {
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET"},
+		MaxAge:       12 * time.Hour,
+	}))
+	r.Any("/trigger/:owner/:repo", func(c *gin.Context) {
 		err := writeFile(githubToken, c.Param("owner"), c.Param("repo"))
 		if err != nil {
 			c.String(500, err.Error())
@@ -42,12 +50,16 @@ func writeFile(githubToken, owner, repo string) error {
 		Name:  ptr.String("github-actions[bot]"),
 		Email: ptr.String("41898282+github-actions[bot]@users.noreply.github.com"),
 	}
-	re, _, err := client.Repositories.UpdateFile(ctx, "chyroc", "github-used-by", path, &github.RepositoryContentFileOptions{
+	_, _, err := client.Repositories.UpdateFile(ctx, "chyroc", "github-used-by", path, &github.RepositoryContentFileOptions{
 		Message:   ptr.String(fmt.Sprintf("add %s/%s", owner, repo)),
 		Content:   []byte(owner + "/" + repo),
 		Author:    &author,
 		Committer: &author,
 	})
-	fmt.Println(re)
+	if err != nil {
+		if strings.Contains(err.Error(), `"sha" wasn't supplied`) {
+			return nil
+		}
+	}
 	return err
 }
