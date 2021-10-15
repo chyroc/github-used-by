@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -26,7 +27,7 @@ func main() {
 		MaxAge:       12 * time.Hour,
 	}))
 	r.Any("/trigger/:owner/:repo", func(c *gin.Context) {
-		err := writeFile(githubToken, c.Param("owner"), c.Param("repo"))
+		err := addRepo(githubToken, c.Param("owner"), c.Param("repo"))
 		if err != nil {
 			c.String(500, err.Error())
 		} else {
@@ -39,7 +40,11 @@ func main() {
 	}
 }
 
-func writeFile(githubToken, owner, repo string) error {
+func addRepo(githubToken, owner, repo string) error {
+	resp, _ := httpClient.Head(fmt.Sprintf("https://github.com/%s/%s", owner, repo))
+	if resp != nil && resp.StatusCode == 404 {
+		return nil
+	}
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: githubToken})
 	tc := oauth2.NewClient(ctx, ts)
@@ -63,3 +68,5 @@ func writeFile(githubToken, owner, repo string) error {
 	}
 	return err
 }
+
+var httpClient = &http.Client{Timeout: time.Second * 3}
