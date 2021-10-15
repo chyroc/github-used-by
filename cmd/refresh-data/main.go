@@ -30,7 +30,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		file := "docs/" + repo
+		file := "docs/" + repo + ".svg"
 		if err = os.MkdirAll(filepath.Dir(file), 0o777); err != nil {
 			panic(err)
 		}

@@ -42,11 +42,12 @@ func writeFile(githubToken, owner, repo string) error {
 		Name:  ptr.String("github-actions[bot]"),
 		Email: ptr.String("41898282+github-actions[bot]@users.noreply.github.com"),
 	}
-	_, _, err := client.Repositories.UpdateFile(ctx, "chyroc", "github-used-by", path, &github.RepositoryContentFileOptions{
+	re, _, err := client.Repositories.UpdateFile(ctx, "chyroc", "github-used-by", path, &github.RepositoryContentFileOptions{
 		Message:   ptr.String(fmt.Sprintf("add %s/%s", owner, repo)),
 		Content:   []byte(owner + "/" + repo),
 		Author:    &author,
 		Committer: &author,
 	})
+	fmt.Println(re)
 	return err
 }
